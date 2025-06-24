@@ -1,0 +1,49 @@
+﻿@model Order.MVC.Models.OrderEntity
+
+@{
+    ViewData["Title"] = "Editar Pedido";
+}
+
+<h1>Editar Pedido</h1>
+
+<div class="card">
+    <div class="card-header">
+        <h5>Pedido #@Model.OrderId</h5>
+    </div>
+    <div class="card-body">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="OrderId" />
+            <input type="hidden" asp-for="DateOrder" />
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Name" class="form-label">Nome do Cliente</label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <label asp-for="DateReady" class="form-label">Data de Entrega</label>
+                    <input asp-for="DateReady" class="form-control" />
+                    <span asp-validation-for="DateReady" class="text-danger"></span>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label asp-for="Observation" class="form-label">Observações</label>
+                <textarea asp-for="Observation" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Observation" class="text-danger"></span>
+            </div>
+
+            <div class="d-flex justify-content-between">
+                <a asp-action="TrackOrders" class="btn btn-secondary">Voltar para Pedidos</a>
+                <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

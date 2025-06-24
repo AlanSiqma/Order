@@ -1,0 +1,169 @@
+﻿@model Order.MVC.ViewModels.OrderWithProductsViewModel
+@{
+    ViewData["Title"] = "Criar Pedido";
+}
+
+<h1>Novo Pedido</h1>
+
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <form asp-action="CreateWithProducts" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Informações do Cliente</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Order.Name" class="form-label">Nome do Cliente</label>
+                            <input asp-for="Order.Name" class="form-control" />
+                            <span asp-validation-for="Order.Name" class="text-danger"></span>
+                        </div>
+                        <input type="hidden" asp-for="Order.DateOrder" />
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Order.Observation" class="form-label">Observações</label>
+                        <textarea asp-for="Order.Observation" class="form-control" rows="3" placeholder="Opcional"></textarea>
+                        <span asp-validation-for="Order.Observation" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5>Selecionar Produtos</h5>
+                    <div class="input-group" style="width: 300px;">
+                        <input type="text" id="productFilter" class="form-control" placeholder="Filtrar produtos...">
+                        <button type="button" class="btn btn-outline-secondary" id="clearFilter">Limpar</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row row-cols-1 row-cols-md-3 g-4 mb-4" id="productContainer">
+                        @for (int i = 0; i < Model.AvailableProducts.Count; i++)
+                        {
+                            var product = Model.AvailableProducts[i];
+                            <div class="col product-item" data-product-name="@product.Title.ToLower()" data-product-description="@product.Description.ToLower()">
+                                <div class="card h-100 product-card">
+                                    <div class="card-body">
+                                        <h5 class="card-title product-title">@product.Title</h5>
+                                        <p class="card-text product-description">@product.Description</p>
+                                        <p class="card-text"><strong>Preço: @product.Value.ToString("C")</strong></p>
+
+                                        <input type="hidden" name="ProductQuantities[@i].ProductId" value="@product.ProductId" />
+                                        <div class="input-group mb-3">
+                                            <button type="button" class="btn btn-outline-secondary decrement-qty">
+                                                <i class="bi bi-dash"></i>
+                                            </button>
+                                            <input type="text" name="ProductQuantities[@i].Quantity" class="form-control quantity-input text-center"
+                                                   value="0" data-product-id="@product.ProductId" data-price="@product.Value" readonly />
+                                            <button type="button" class="btn btn-outline-secondary increment-qty">
+                                                <i class="bi bi-plus"></i>
+                                            </button>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <div id="noProductsMessage" class="alert alert-info d-none">
+                        Nenhum produto corresponde aos critérios de filtro.
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert alert-info">
+                <strong>Valor Total do Pedido: <span id="total-price">R$0,00</span></strong>
+            </div>
+
+            <div class="form-group d-flex justify-content-between">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-bag-check"></i> Finalizar Pedido
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function() {
+            // Increment quantity
+            $(document).on('click', '.increment-qty', function() {
+                var input = $(this).closest('.input-group').find('.quantity-input');
+                var currentVal = parseInt(input.val()) || 0;
+                input.val(currentVal + 1);
+                calculateTotal();
+            });
+
+            // Decrement quantity
+            $(document).on('click', '.decrement-qty', function() {
+                var input = $(this).closest('.input-group').find('.quantity-input');
+                var currentVal = parseInt(input.val()) || 0;
+                if (currentVal > 0) {
+                    input.val(currentVal - 1);
+                    calculateTotal();
+                }
+            });
+
+            // Filter products
+            $('#productFilter').on('keyup', function() {
+                var filterText = $(this).val().toLowerCase();
+                var visibleCount = 0;
+
+                $('.product-item').each(function() {
+                    var productName = $(this).data('product-name');
+                    var productDesc = $(this).data('product-description');
+
+                    if (productName.indexOf(filterText) > -1 || productDesc.indexOf(filterText) > -1) {
+                        $(this).removeClass('d-none');
+                        visibleCount++;
+                    } else {
+                        $(this).addClass('d-none');
+                    }
+                });
+
+                // Show/hide no products message
+                if (visibleCount === 0) {
+                    $('#noProductsMessage').removeClass('d-none');
+                } else {
+                    $('#noProductsMessage').addClass('d-none');
+                }
+            });
+
+            // Clear filter
+            $('#clearFilter').click(function() {
+                $('#productFilter').val('');
+                $('.product-item').removeClass('d-none');
+                $('#noProductsMessage').addClass('d-none');
+            });
+
+            // Initial calculation
+            calculateTotal();
+
+            function calculateTotal() {
+                let total = 0;
+                
+                $('.quantity-input').each(function() {
+                    const quantity = parseInt($(this).val()) || 0;
+                    const price = parseFloat($(this).data('price')) || 0;
+                    
+                    if (quantity > 0) {
+                        total += price * quantity;
+                    }
+                });
+                
+                // Formato para Real brasileiro
+                $('#total-price').text(new Intl.NumberFormat('pt-BR', { 
+                    style: 'currency', 
+                    currency: 'BRL' 
+                }).format(total));
+            }
+        });
+    </script>
+}

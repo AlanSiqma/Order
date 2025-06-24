@@ -1,0 +1,152 @@
+﻿@model IEnumerable<Order.MVC.Models.OrderEntity>
+@{
+    ViewData["Title"] = "Acompanhar Pedidos";
+}
+
+<h1>Acompanhar Pedidos</h1>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Pedido #</th>
+                        <th>Cliente</th>
+                        <th>Data</th>
+                        <th>Status</th>
+                        <th>Tempo na Etapa</th>
+                        <th>Itens</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model)
+                    {
+                        <tr>
+                            <td>@order.OrderId</td>
+                            <td>@order.Name</td>
+                            <td>@order.DateOrder.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>
+                                @if (order.DateDelivered.HasValue)
+                                {
+                                    <span class="badge bg-primary">Entregue</span>
+                                }
+                                else if (order.DateReady.HasValue)
+                                {
+                                    <span class="badge bg-success">Pronto</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">Em Andamento</span>
+                                }
+                            </td>
+                            <td>
+                                @if (order.DateDelivered.HasValue)
+                                {
+                                    var tempoTotal = order.DateDelivered.Value - order.DateOrder;
+                                    var formatoTempo = tempoTotal.TotalHours >= 1 
+                                        ? $"{Math.Floor(tempoTotal.TotalHours)}h {tempoTotal.Minutes}min" 
+                                        : $"{tempoTotal.Minutes}min {tempoTotal.Seconds}s";
+                                    <span class="badge bg-primary">
+                                        <i class="bi bi-check-circle-fill"></i> Concluído em @formatoTempo
+                                    </span>
+                                }
+                                else if (order.DateReady.HasValue)
+                                {
+                                    <span class="badge bg-success timer" 
+                                          data-timestamp="@order.DateReady?.ToString("yyyy-MM-ddTHH:mm:ss")">
+                                        <i class="bi bi-stopwatch"></i> Calculando...
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark timer" 
+                                          data-timestamp="@order.DateOrder.ToString("yyyy-MM-ddTHH:mm:ss")">
+                                        <i class="bi bi-stopwatch"></i> Calculando...
+                                    </span>
+                                }
+                            </td>
+                            <td>@order.OrderProducts.Count item(ns)</td>
+                            <td>
+                                <div class="btn-group">                                    
+                                    <a asp-action="OrderDetails" asp-route-id="@order.OrderId" class="btn btn-sm btn-info">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    @if (!order.DateReady.HasValue)
+                                    {
+                                        <a asp-action="MarkAsReady" asp-route-id="@order.OrderId" class="btn btn-sm btn-success">
+                                            <i class="bi bi-check-circle"></i>
+                                        </a>
+                                    }
+                                    @if (order.DateReady.HasValue && !order.DateDelivered.HasValue)
+                                    {
+                                        <a asp-action="MarkAsDelivered" asp-route-id="@order.OrderId" class="btn btn-sm btn-primary">
+                                            <i class="bi bi-truck"></i>
+                                        </a>
+                                    }
+                                    <a asp-action="Delete" asp-route-id="@order.OrderId" class="btn btn-sm btn-danger">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="alert alert-info">
+                Nenhum pedido encontrado. <a asp-action="CreateWithProducts"><i class="bi bi-plus-circle"></i> Criar um novo pedido</a>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Initialize timers
+            updateAllTimers();
+            
+            // Update timers every second
+            setInterval(updateAllTimers, 1000);
+            
+            // Function to update all timer elements
+            function updateAllTimers() {
+                $('.timer').each(function() {
+                    var timestamp = $(this).data('timestamp');
+                    if (timestamp) {
+                        var startTime = new Date(timestamp);
+                        var now = new Date();
+                        var diff = now - startTime;
+                        
+                        // Convert to hours, minutes, seconds
+                        var hours = Math.floor(diff / (1000 * 60 * 60));
+                        var minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                        var seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                        
+                        // Format display text
+                        var displayText = '';
+                        if (hours > 0) {
+                            displayText += hours + 'h ';
+                        }
+                        displayText += minutes + 'min ' + seconds + 's';
+                        
+                        // Change badge color based on elapsed time
+                        if (hours >= 1 || minutes >= 30) {
+                            $(this).removeClass('bg-warning bg-success bg-info').addClass('bg-danger');
+                        } else if (minutes >= 15) {
+                            $(this).removeClass('bg-success bg-info bg-danger').addClass('bg-warning');
+                        }
+                        
+                        // Update the timer text
+                        $(this).html('<i class="bi bi-stopwatch"></i> ' + displayText);
+                    }
+                });
+            }
+        });
+    </script>
+}

@@ -1,0 +1,49 @@
+﻿@model Order.MVC.Models.ProductEntity
+@{
+    ViewData["Title"] = "Excluir Produto";
+}
+
+<div class="card border-danger">
+    <div class="card-header bg-danger text-white">
+        <h3><i class="bi bi-exclamation-triangle-fill me-2"></i>Confirmar Exclusão</h3>
+    </div>
+    <div class="card-body">
+        <div class="alert alert-warning">
+            <p class="mb-0">
+                <strong>Atenção:</strong> Você está prestes a excluir permanentemente este produto. 
+                Esta ação não pode ser desfeita.
+            </p>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Detalhes do Produto</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Nome:</strong> @Model.Title</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Preço:</strong> @Model.Value.ToString("C")</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <p><strong>Descrição:</strong> @Model.Description</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="ProductId" />
+            <div class="d-flex">
+                <a asp-action="Index" class="btn btn-secondary me-2">Voltar para a Lista</a>
+                <button type="submit" class="btn btn-danger">
+                    <i class="bi bi-trash"></i> Confirmar Exclusão
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

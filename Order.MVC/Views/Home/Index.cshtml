@@ -1,0 +1,108 @@
+﻿@{
+    ViewData["Title"] = "Sistema de Gestão de Pedidos";
+}
+
+<div class="container py-4">
+    <div class="p-4 mb-4 bg-light rounded-3">
+        <div class="container-fluid py-4">
+            <h1 class="display-5 fw-bold">Sistema de Gestão de Pedidos</h1>
+            <p class="col-md-10 fs-4">Gerencie pedidos, produtos e acompanhe o status de produção e entrega com facilidade.</p>
+        </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        <!-- Card de Produtos -->
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm hover-card">
+                <a asp-controller="Product" asp-action="Index" class="text-decoration-none text-dark">
+                    <div class="card-body text-center">
+                        <div class="feature-icon bg-primary bg-gradient text-white mb-3 p-3 rounded-circle mx-auto" style="width: 60px; height: 60px;">
+                            <i class="bi bi-box-seam fs-2"></i>
+                        </div>
+                        <h3 class="card-title">Produtos</h3>
+                        <p class="card-text">Gerencie o catálogo de produtos disponíveis no sistema.</p>
+                        <p class="card-text"><small class="text-muted">Adicione, edite e remova produtos</small></p>
+                    </div>
+                 @*    <div class="card-footer border-0 bg-transparent">
+                        <span class="btn btn-sm btn-outline-primary w-100">Acessar Produtos <i class="bi bi-arrow-right"></i></span>
+                    </div> *@
+                </a>
+            </div>
+        </div>
+
+        <!-- Card de Novo Pedido -->
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm hover-card">
+                <a asp-controller="Order" asp-action="CreateWithProducts" class="text-decoration-none text-dark">
+                    <div class="card-body text-center">
+                        <div class="feature-icon bg-success bg-gradient text-white mb-3 p-3 rounded-circle mx-auto" style="width: 60px; height: 60px;">
+                            <i class="bi bi-plus-circle fs-2"></i>
+                        </div>
+                        <h3 class="card-title">Criar Pedido</h3>
+                        <p class="card-text">Registre um novo pedido com os produtos desejados.</p>
+                        <p class="card-text"><small class="text-muted">Selecione produtos e quantidades</small></p>
+                    </div>
+                  @*   <div class="card-footer border-0 bg-transparent">
+                        <span class="btn btn-sm btn-outline-success w-100">Criar Novo Pedido <i class="bi bi-arrow-right"></i></span>
+                    </div> *@
+                </a>
+            </div>
+        </div>
+
+        <!-- Card de Lista de Pedidos -->
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm hover-card">
+                <a asp-controller="Order" asp-action="TrackOrders" class="text-decoration-none text-dark">
+                    <div class="card-body text-center">
+                        <div class="feature-icon bg-info bg-gradient text-white mb-3 p-3 rounded-circle mx-auto" style="width: 60px; height: 60px;">
+                            <i class="bi bi-list-check fs-2"></i>
+                        </div>
+                        <h3 class="card-title">Pedidos</h3>
+                        <p class="card-text">Visualize e gerencie todos os pedidos em andamento ou concluídos.</p>
+                        <p class="card-text"><small class="text-muted">Lista detalhada de pedidos</small></p>
+                    </div>
+                 @*    <div class="card-footer border-0 bg-transparent">
+                        <span class="btn btn-sm btn-outline-info w-100">Ver Pedidos <i class="bi bi-arrow-right"></i></span>
+                    </div> *@
+                </a>
+            </div>
+        </div>
+
+        <!-- Card de Painel de Pedidos -->
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm hover-card">
+                <a asp-controller="Order" asp-action="OrderBoard" class="text-decoration-none text-dark">
+                    <div class="card-body text-center">
+                        <div class="feature-icon bg-warning bg-gradient text-white mb-3 p-3 rounded-circle mx-auto" style="width: 60px; height: 60px;">
+                            <i class="bi bi-kanban fs-2"></i>
+                        </div>
+                        <h3 class="card-title">Painel</h3>
+                        <p class="card-text">Acompanhe em tempo real o status de todos os pedidos em um painel visual.</p>
+                        <p class="card-text"><small class="text-muted">Visualização em colunas por status</small></p>
+                    </div>
+                  @*   <div class="card-footer border-0 bg-transparent">
+                        <span class="btn btn-sm btn-outline-warning w-100">Abrir Painel <i class="bi bi-arrow-right"></i></span>
+                    </div> *@
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<style>
+    .hover-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .hover-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.12) !important;
+        }
+
+    .feature-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>

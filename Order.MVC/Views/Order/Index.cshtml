@@ -1,0 +1,48 @@
+﻿@model IEnumerable<Order.MVC.Models.OrderEntity>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
+    <a asp-action="CreateWithProducts" class="btn btn-success">Create Order with Products</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DateOrder)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DateReady)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateOrder)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateReady)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.OrderId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.OrderId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.OrderId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

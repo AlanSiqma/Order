@@ -1,0 +1,56 @@
+﻿@model Order.MVC.Models.ProductEntity
+
+@{
+    ViewData["Title"] = "Editar Produto";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Editar Produto</h1>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ProductId" />
+            
+            <div class="mb-3">
+                <label asp-for="Title" class="form-label">Nome do Produto</label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label">Descrição</label>
+                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            
+            <div class="mb-3">
+                <label asp-for="Value" class="form-label">Preço</label>
+                <div class="input-group">
+                    <span class="input-group-text">R$</span>
+                    <input asp-for="Value" class="form-control money-input" data-val-number="O campo Preço deve ser um número." />
+                </div>
+                <span asp-validation-for="Value" class="text-danger"></span>
+            </div>
+            
+            <div class="d-flex justify-content-between">
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Voltar
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save"></i> Salvar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script src="~/js/localization/messages_pt_BR.js"></script>
+    <script src="~/js/currency-input.js"></script>
+}

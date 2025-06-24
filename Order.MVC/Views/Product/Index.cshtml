@@ -1,0 +1,53 @@
+﻿@model IEnumerable<Order.MVC.Models.ProductEntity>
+
+@{
+    ViewData["Title"] = "Produtos";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Produtos</h1>
+    <a asp-action="Create" class="btn btn-success">
+        <i class="bi bi-plus-lg"></i> Novo Produto
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            @foreach (var item in Model)
+            {
+                <div class="col">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">@item.Title</h5>
+                            <p class="card-text">@item.Description</p>
+                            <p class="card-text text-primary fw-bold">@item.Value.ToString("C")</p>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <div class="d-flex justify-content-between">
+                                <div class="btn-group">
+                                    <a asp-action="Edit" asp-route-id="@item.ProductId" class="btn btn-sm btn-primary">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                 @*    <a asp-action="Details" asp-route-id="@item.ProductId" class="btn btn-sm btn-info">
+                                        <i class="bi bi-info-circle"></i>
+                                    </a> *@
+                                    <a asp-action="Delete" asp-route-id="@item.ProductId" class="btn btn-sm btn-danger">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="alert alert-info">
+                Nenhum produto encontrado. <a asp-action="Create">Adicione seu primeiro produto</a>
+            </div>
+        }
+    </div>
+</div>
